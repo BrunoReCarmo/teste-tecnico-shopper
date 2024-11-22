@@ -1,0 +1,13 @@
+version: '3'
+services:
+  react-app:
+    image: react-app
+    stdin_open: true
+    ports:
+      - "80:80"
+
+  api-server: 
+    image: api-server
+    ports:
+      - "8080:8080"
+

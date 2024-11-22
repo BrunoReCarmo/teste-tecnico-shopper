@@ -14,5 +14,5 @@ app.use((0, cors_1.default)());
 //rotas API
 app.use(_middleware_1.ServerKey, _routes_1.default);
 //Bloco c/ a porta do servidor
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
