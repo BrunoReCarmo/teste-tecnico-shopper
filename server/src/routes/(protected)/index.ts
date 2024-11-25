@@ -1,10 +1,13 @@
-import { Router, Request, Response } from "express";
-import { MidVerifyToken } from "@middleware";
+import { Router } from "express";
 
 const ProtectedRoutes = Router();
 
-ProtectedRoutes.get('/test', MidVerifyToken, (req: Request, res: Response) => {
-    return res.send("Hello Word, Middleware is working")
-});
+const routes = [
+    require("./AdressData"),
+];
 
+for (const route of routes) {
+    ProtectedRoutes.use("/api", route);
+}
+  
 export = ProtectedRoutes;

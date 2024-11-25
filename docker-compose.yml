@@ -5,9 +5,13 @@ services:
     stdin_open: true
     ports:
       - "80:80"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
-  api-server: 
+  api-server:
     image: api-server
     ports:
       - "8080:8080"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
