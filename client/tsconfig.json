@@ -3,6 +3,15 @@
     "jsx": "react-jsx",
     "strict": true, 
     "esModuleInterop": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@base/*": ["./*"]
+    }
+  },
 }
