@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'titleFont';
+  src: local('titleFont'), url(./fonts/font.woff2) format('woff');
+}
+
+.title {
+  font-family: titleFont;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

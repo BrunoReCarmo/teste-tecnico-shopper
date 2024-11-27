@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "strict": true, 
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "plugins": [
@@ -10,8 +10,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@base/*": ["./*"]
+      "@/*": [
+        "./src/components/*"
+      ]
     }
-  },
+  }
 }
