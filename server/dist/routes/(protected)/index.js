@@ -5,6 +5,6 @@ const routes = [
     require("./AdressData"),
 ];
 for (const route of routes) {
-    ProtectedRoutes.use("/api", route);
+    ProtectedRoutes.use(route);
 }
 module.exports = ProtectedRoutes;

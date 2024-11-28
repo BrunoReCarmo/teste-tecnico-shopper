@@ -6,7 +6,7 @@ const express_1 = __importDefault(require("express"));
 const AddressData = (0, express_1.default)();
 AddressData.use(express_1.default.json());
 AddressData.post("/ride/estimate", (req, res) => {
-    const kmTravel = req.body.km; // Expecting the "km" property in the body
+    const kmTravel = req.body.km;
     const drivers = [
         {
             id: 1,
@@ -16,8 +16,8 @@ AddressData.post("/ride/estimate", (req, res) => {
             car: "Plymouth Valiant 1973 rosa e enferrujado",
             rating: "2/5",
             comment: "Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.",
-            ratePerKm: 2.5, // taxa por quilômetro
-            minKm: 1, // quilômetro mínimo
+            ratePerKm: 2.5,
+            minKm: 1,
         },
         {
             id: 2,
@@ -27,8 +27,8 @@ AddressData.post("/ride/estimate", (req, res) => {
             car: "Dodge Charger R/T 1970 modificado",
             rating: "4/5",
             comment: "Que viagem incrível! O carro é um show à parte e o motorista, apesar de ter uma cara de poucos amigos, foi super gente boa. Recomendo!",
-            ratePerKm: 5.0, // taxa por quilômetro
-            minKm: 5, // quilômetro mínimo
+            ratePerKm: 5.0,
+            minKm: 5,
         },
         {
             id: 3,
@@ -38,15 +38,13 @@ AddressData.post("/ride/estimate", (req, res) => {
             car: "Aston Martin DB5 clássico",
             rating: "5/5",
             comment: "Serviço impecável! O motorista é a própria definição de classe e o carro é simplesmente magnífico. Uma experiência digna de um agente secreto.",
-            ratePerKm: 10.0, // taxa por quilômetro
-            minKm: 10, // quilômetro mínimo
+            ratePerKm: 10.0,
+            minKm: 10,
         },
     ];
-    // Calculating the ride cost for each driver based on the provided distance
+    // Cálculo para custo estimado da viagem após requisição
     const driversWithCost = drivers.map((driver) => {
-        // Check if the provided distance is greater than or equal to the minimum required
         const kmFinal = kmTravel >= driver.minKm ? kmTravel : driver.minKm;
-        // Calculate the cost for the ride
         const rideCost = kmFinal * driver.ratePerKm;
         return Object.assign(Object.assign({}, driver), { rideCost });
     });

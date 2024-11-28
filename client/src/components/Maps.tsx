@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import axios from "axios";
 import {
   GoogleMap,
   Marker,
@@ -6,7 +7,7 @@ import {
   StandaloneSearchBox,
   DirectionsService,
   DirectionsRenderer,
-  DistanceMatrixService
+  DistanceMatrixService,
 } from "@react-google-maps/api";
 import { Card, CardContent, CardFooter, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -30,7 +31,10 @@ const Maps = () => {
     useState<google.maps.DistanceMatrixResponse | null>(null);
 
   const [distance, setDistance] = useState<string>("");
-  const [duration, setDuration] = useState('');
+  const [distanceinKm, setDistanceinKm] = useState<string>("");
+  const [duration, setDuration] = useState("");
+
+  const [drivers, setDrivers] = useState([]);
   const [driverReqState, setDriverReqState] = useState<string>("hidden");
   const [trackReqState, setTrackReqState] = useState<string>("block");
 
@@ -52,15 +56,27 @@ const Maps = () => {
     setSearchBoxB(ref);
   };
 
-  // Local de embarque, pegando valores do input
   const onPlacesChangedA = () => {
-    const places = searchBoxA!.getPlaces();
+    if (!searchBoxA) {
+      console.error("searchBoxA não foi carregado.");
+      return;
+    }
+
+    const places = searchBoxA.getPlaces();
+
+    // Verificar se places não é undefined ou vazio
+    if (!places || places.length === 0) {
+      console.error("Nenhum local encontrado.");
+      return;
+    }
+
     console.log(places);
-    const place = places![0];
+    const place = places[0];
     const location = {
       lat: place?.geometry?.location?.lat() || 0,
       lng: place?.geometry?.location?.lng() || 0,
     };
+
     settargetA(location);
     setOrigin(null);
     setDestination(null);
@@ -68,15 +84,27 @@ const Maps = () => {
     map?.panTo(location);
   };
 
-  // Local de desembarque, pegando valores do input
   const onPlacesChangedB = () => {
-    const places = searchBoxB!.getPlaces();
+    if (!searchBoxB) {
+      console.error("searchBoxB não foi carregado.");
+      return;
+    }
+
+    const places = searchBoxB.getPlaces();
+
+    // Verificar se places não é undefined ou vazio
+    if (!places || places.length === 0) {
+      console.error("Nenhum local encontrado.");
+      return;
+    }
+
     console.log(places);
-    const place = places![0];
+    const place = places[0];
     const location = {
       lat: place?.geometry?.location?.lat() || 0,
       lng: place?.geometry?.location?.lng() || 0,
     };
+
     settargetB(location);
     setOrigin(null);
     setDestination(null);
@@ -98,7 +126,7 @@ const Maps = () => {
   const newReq = () => {
     setDriverReqState("hidden");
     setTrackReqState("block");
-  }
+  };
 
   const directionsServiceOptions =
     // @ts-ignore
@@ -130,36 +158,70 @@ const Maps = () => {
       const service = new window.google.maps.DistanceMatrixService();
       service.getDistanceMatrix(
         {
-          origins: [targetA],  // targetA como origem
-          destinations: [targetB],  // targetB como destino
+          origins: [targetA], // targetA como origem
+          destinations: [targetB], // targetB como destino
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
         (response, status) => {
-          if (response && status === "OK" && response.rows && response.rows[0] && response.rows[0].elements) {
+          if (
+            response &&
+            status === "OK" &&
+            response.rows &&
+            response.rows[0] &&
+            response.rows[0].elements
+          ) {
             const result = response.rows[0].elements[0];
-  
+
             if (result && result.distance && result.duration) {
-              setDistance(result.distance.text);
+              const numericDistance = parseFloat(
+                result.distance.text.replace(" km", "").replace(",", ".")
+              );
+
+              setDistanceinKm(result.distance.text);
+              setDistance(numericDistance.toString());
               setDuration(result.duration.text);
             } else {
-              console.error("Distance or duration not available in the response.");
+              console.error(
+                "Distance or duration not available in the response."
+              );
             }
           } else {
-            console.error("Error with DistanceMatrixService or invalid response structure.");
+            console.error(
+              "Error with DistanceMatrixService or invalid response structure."
+            );
           }
         }
       );
     } else {
       console.error("Points not definied.");
     }
-  };  
+  };
+
+  useEffect(() => {
+    if (distance) {
+      const handleEstimateRide = async () => {
+        try {
+          const response = await axios.post(
+            "http://localhost:8080/ride/estimate",
+            {
+              km: distance,
+            }
+          );
+
+          setDrivers(response.data.drivers);
+        } catch (error) {
+          console.error("There was an error making the request:", error);
+        }
+      };
+
+      handleEstimateRide();
+    }
+  }, [distance]);
+
 
   return (
     <div className="w-full h-full">
-      <LoadScript
-        googleMapsApiKey={"AIzaSyDmyOn9q7XLenV8V4onkqT2tXlpYuadgjw"}
-        libraries={["places"]}
-      >
+      <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY as string} libraries={["places"]}>
         {/*Responsividade PC e Mobile*/}
         <div className="grid md:grid-cols-2 h-full">
           <div
@@ -188,7 +250,7 @@ const Maps = () => {
                   <Button
                     onClick={() => {
                       traceRoute();
-                      calculateDistance()
+                      calculateDistance();
                     }}
                   >
                     Ver rota →
@@ -199,8 +261,28 @@ const Maps = () => {
           </div>
           <div className={`${driverReqState} items-center`}>
             <div className="grid">
-            <Button className="w-fit my-4" onClick={newReq}>← Mudar rota</Button>
-            <Driver state={driverReqState} distance={distance} />
+              <Button className="w-fit my-4" onClick={newReq}>
+                ← Mudar rota
+              </Button>
+              <div className="grid grid-cols-2 gap-4 p-4">
+                <div className="border flex justify-center items-end p-4">
+                  distância
+                  <span className="gap-2 text-2xl font-bold">
+                    &nbsp;{distanceinKm}
+                  </span>
+                </div>
+                <div className="border flex justify-center items-end p-4">
+                  chegada em
+                  <span className="gap-2 text-2xl font-bold">
+                    &nbsp;{duration}
+                  </span>
+                </div>
+              </div>
+              <Driver
+                state={driverReqState}
+                distance={distance}
+                drivers={drivers}
+              />
             </div>
           </div>
           <div className="flex align-center justify-center">

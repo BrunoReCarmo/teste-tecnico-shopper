@@ -1,4 +1,3 @@
-version: '3'
 services:
   react-app:
     image: react-app
@@ -6,7 +5,9 @@ services:
     ports:
       - "80:80"
     environment:
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - REACT_APP_GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    env_file:
+      - .env  
 
   api-server:
     image: api-server
@@ -14,4 +15,5 @@ services:
       - "8080:8080"
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-
+    env_file:
+      - .env 

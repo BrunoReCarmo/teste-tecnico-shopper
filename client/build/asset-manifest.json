@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.9417448a.css",
+    "main.js": "/static/js/main.def486ed.js",
+    "static/media/font.woff2": "/static/media/font.82d4f62fb972e38abe4a.woff2",
+    "index.html": "/index.html",
+    "main.9417448a.css.map": "/static/css/main.9417448a.css.map",
+    "main.def486ed.js.map": "/static/js/main.def486ed.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9417448a.css",
+    "static/js/main.def486ed.js"
+  ]
+}

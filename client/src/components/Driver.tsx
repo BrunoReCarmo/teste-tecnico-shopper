@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -16,71 +15,30 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Badge } from "./ui/badge";
-
-const motoristas = [
-  {
-    id: 1,
-    profilePic:
-      "https://www.bing.com/th?id=OIP.Tt78xKbjLk2dbxi9VuyLkwHaHJ&w=150&h=145&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2",
-    nome: "Homer Simpson",
-    descricao:
-      "Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).",
-    carro: "Plymouth Valiant 1973 rosa e enferrujado",
-    avaliacao: "2/5",
-    comentario:
-      "Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.",
-    taxaKm: "R$2,50",
-    kmMinimo: 1,
-  },
-  {
-    id: 2,
-    profilePic:
-      "https://th.bing.com/th/id/OIP.W4jFjh6yKuBbY-s7u5Z2lgHaNG?rs=1&pid=ImgDetMain",
-    nome: "Dominic Toretto",
-    descricao:
-      "Ei, aqui é o Dom. Pode entrar, vou te levar com segurança e rapidez ao seu destino. Só não mexa no rádio, a playlist é sagrada.",
-    carro: "Dodge Charger R/T 1970 modificado",
-    avaliacao: "4/5",
-    comentario:
-      "Que viagem incrível! O carro é um show à parte e o motorista, apesar de ter uma cara de poucos amigos, foi super gente boa. Recomendo!",
-    taxaKm: "R$5,00",
-    kmMinimo: 5,
-  },
-  {
-    id: 3,
-    profilePic:
-      "https://th.bing.com/th/id/OIP.pHAGKuR19HYJlSe3QjdtQQHaE7?w=257&h=180&c=7&r=0&o=5&pid=1.7",
-    nome: "James Bond",
-    descricao:
-      "Boa noite, sou James Bond. À seu dispor para um passeio suave e discreto. Aperte o cinto e aproveite a viagem.",
-    carro: "Aston Martin DB5 clássico",
-    avaliacao: "5/5",
-    comentario:
-      "Serviço impecável! O motorista é a própria definição de classe e o carro é simplesmente magnífico. Uma experiência digna de um agente secreto.",
-    taxaKm: "R$10,00",
-    kmMinimo: 10,
-  },
-];
+import { UserData } from "./User-Data";
 
 interface DriverProps {
   state: string;
   distance: string;
+  drivers: any;
 }
 
-export const Driver = ({ state, distance }: DriverProps) => {
+export const Driver = ({ state, distance, drivers }: DriverProps) => {
+  const driversData = drivers;
+
   return (
-    <div className={`max-w-2/3 flex justify-center state ${state}`}>
-      <div className="grid md:grid-cols-3 gap-4 w-full max-w-2/3 px-4 overflow-hidden">
-        {motoristas.map((data: any) => (
-          <Card key={data.id} className="w-full max-w-xs mx-auto">
+    <div className={`max-w-4/5 flex justify-center state ${state}`}>
+      <div className="grid md:grid-cols-3 gap-6 w-full max-w-4/5 px-4 overflow-hidden">
+        {driversData.map((data: any) => (
+          <Card key={data.id} className="w-full max-w-md mx-auto">
             <CardHeader>
               <div className="flex items-center">
                 <Avatar>
                   <AvatarImage src={data.profilePic} />
-                  <AvatarFallback>{data.nome}</AvatarFallback>
+                  <AvatarFallback>{data.name}</AvatarFallback>
                 </Avatar>
                 <div className="ml-3">
-                  <CardTitle>{data.nome}</CardTitle>
+                  <CardTitle>{data.name}</CardTitle>
                   <div className="flex items-center">
                     <svg
                       className="w-4 h-4 text-yellow-300 me-1"
@@ -112,7 +70,7 @@ export const Driver = ({ state, distance }: DriverProps) => {
                             </div>
                           </DialogTitle>
                           <DialogDescription className="mb-4">
-                            <p>{data.comentario}</p>
+                            <p>{data.comment}</p>
                           </DialogDescription>
                         </DialogHeader>
                       </DialogContent>
@@ -122,14 +80,14 @@ export const Driver = ({ state, distance }: DriverProps) => {
               </div>
             </CardHeader>
             <CardContent>
-              <p>{data.descricao}</p>
-              <div className="flex my-4">
+              <p>{data.description}</p>
+              <div className="flex my-4 gap-2">
                 <p>
-                  <Badge>{data.taxaKm} por Km</Badge>
+                  <Badge>R${data.ratePerKm} por Km</Badge>
                 </p>
                 <p>
-                  <Badge variant={"outline"}>
-                    viagens a partir de {data.kmMinimo}km
+                  <Badge variant={"secondary"}>
+                    viagens a partir de {data.minKm}km
                   </Badge>
                 </p>
               </div>
@@ -138,13 +96,11 @@ export const Driver = ({ state, distance }: DriverProps) => {
                   src="https://img.freepik.com/premium-vector/car-isolated-vector-illustration-automobile-city-background_175838-1484.jpg"
                   alt="car"
                 />
-                <div className="p-4 text-xs flex items-center">
-                  {data.carro}
-                </div>
+                <div className="p-4 text-xs flex items-center">{data.car}</div>
               </div>
             </CardContent>
-            <CardFooter className="gap-2">
-              a distancia é de {distance}
+            <CardFooter className="gap-2 text-2xl font-bold">
+              {data.minKm > distance ? <Badge variant="custom">Indisponível</Badge> : <>R${data.rideCost}<UserData/></>}
             </CardFooter>
           </Card>
         ))}

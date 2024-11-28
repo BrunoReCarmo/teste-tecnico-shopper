@@ -7,7 +7,7 @@ const routes = [
 ];
 
 for (const route of routes) {
-    ProtectedRoutes.use("/api", route);
+    ProtectedRoutes.use(route);
 }
   
 export = ProtectedRoutes;
